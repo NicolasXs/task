@@ -203,7 +203,6 @@
 <script setup>
 import { ref, computed, watch } from "vue";
 
-// Props
 const props = defineProps({
     projects: { type: Array, default: () => [] },
     loading: { type: Boolean, default: false },
@@ -211,7 +210,6 @@ const props = defineProps({
     totalPages: { type: Number, default: 1 },
 });
 
-// Emits
 const emit = defineEmits([
     "update:searchTerm",
     "update:statusFilter",
@@ -222,17 +220,13 @@ const emit = defineEmits([
     "select-project",
 ]);
 
-// Local state
 const searchTerm = ref("");
 const statusFilter = ref("all");
 const sortBy = ref("newest");
-
-// Watch for changes and emit
 watch(searchTerm, (value) => emit("update:searchTerm", value));
 watch(statusFilter, (value) => emit("update:statusFilter", value));
 watch(sortBy, (value) => emit("update:sortBy", value));
 
-// Methods
 const openProjectModal = (project = null) => {
     emit("open-project-modal", project);
 };

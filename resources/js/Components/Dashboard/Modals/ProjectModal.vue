@@ -218,17 +218,14 @@
 <script setup>
 import { ref, watch, reactive } from "vue";
 
-// Props
 const props = defineProps({
     isOpen: { type: Boolean, default: false },
     project: { type: Object, default: null },
     loading: { type: Boolean, default: false },
 });
 
-// Emits
 const emit = defineEmits(["close", "save"]);
 
-// Form data
 const form = reactive({
     name: "",
     description: "",
@@ -238,10 +235,7 @@ const form = reactive({
     end_date: "",
 });
 
-// Errors
 const errors = ref({});
-
-// Watch for project changes
 watch(
     () => props.project,
     (newProject) => {
@@ -253,7 +247,6 @@ watch(
             form.start_date = newProject.start_date || "";
             form.end_date = newProject.end_date || "";
         } else {
-            // Reset form for new project
             form.name = "";
             form.description = "";
             form.color = "#3B82F6";
@@ -266,7 +259,6 @@ watch(
     { immediate: true }
 );
 
-// Watch for modal open/close
 watch(
     () => props.isOpen,
     (isOpen) => {
@@ -276,14 +268,12 @@ watch(
     }
 );
 
-// Methods
 const handleSubmit = async () => {
     errors.value = {};
 
     try {
         const projectData = { ...form };
 
-        // Add ID if editing
         if (props.project?.id) {
             projectData.id = props.project.id;
         }

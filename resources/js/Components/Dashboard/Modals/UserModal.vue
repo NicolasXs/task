@@ -113,7 +113,6 @@ const handleEscapeKey = (event) => {
     }
 };
 
-// Adicionar/remover event listener quando o modal abre/fecha
 watch(
     () => props.userModalOpen,
     (isOpen) => {

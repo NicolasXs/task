@@ -230,7 +230,6 @@ const form = ref({
 const errors = ref({});
 const loading = ref(false);
 
-// Watch for task changes to populate form
 watch(
     () => props.task,
     (newTask) => {

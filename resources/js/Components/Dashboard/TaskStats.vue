@@ -192,7 +192,6 @@ const getPercentage = (value) => {
     return ((value / props.stats.total) * 100).toFixed(1);
 };
 
-// Filtrar apenas os status que queremos mostrar (completed e pending)
 const filteredTasksByStatus = computed(() => {
     if (!props.stats.tasksByStatus) return [];
 

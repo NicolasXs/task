@@ -135,7 +135,6 @@ const loadTasks = async () => {
             return;
         }
     } catch (error) {
-        console.error("Error loading tasks:", error);
     } finally {
         loading.value = false;
     }
@@ -175,7 +174,6 @@ const loadStats = async () => {
             tasksLast7Days: apiData.charts?.tasksLast7Days || [],
         };
     } catch (error) {
-        console.error("Error loading stats:", error);
         statistics.value = {
             total: 0,
             completed: 0,
@@ -202,7 +200,6 @@ const loadUsers = async () => {
         const response = await axios.get("/api/users");
         users.value = response.data.data || response.data;
     } catch (error) {
-        console.error("Error loading users:", error);
     } finally {
         loadingUsers.value = false;
     }
@@ -233,7 +230,6 @@ const saveTask = async (taskData) => {
         loadTasks();
         loadStats();
     } catch (error) {
-        console.error("Error saving task:", error);
         if (error.response?.data?.errors) {
             throw error;
         } else {
@@ -247,9 +243,7 @@ const toggleTaskCompletion = async (taskId) => {
         await axios.patch(`/api/tasks/${taskId}/toggle`);
         loadTasks();
         loadStats();
-    } catch (error) {
-        console.error("Error toggling task:", error);
-    }
+    } catch (error) {}
 };
 
 const confirmDeleteTask = (taskId) => {
@@ -264,9 +258,7 @@ const deleteTask = async (taskId) => {
         await axios.delete(`/api/tasks/${taskId}`);
         loadTasks();
         loadStats();
-    } catch (error) {
-        console.error("Error deleting task:", error);
-    }
+    } catch (error) {}
 };
 
 const handleConfirm = async () => {
@@ -301,9 +293,7 @@ const deleteUser = async (userId) => {
         try {
             await axios.delete(`/api/users/${userId}`);
             loadUsers();
-        } catch (error) {
-            console.error("Error deleting user:", error);
-        }
+        } catch (error) {}
     }
 };
 
@@ -318,9 +308,7 @@ const saveUser = async () => {
         userModalOpen.value = false;
         userForm.value = { id: null, name: "", email: "", role: "user" };
         loadUsers();
-    } catch (error) {
-        console.error("Error saving user:", error);
-    }
+    } catch (error) {}
 };
 
 const closeUserModal = () => {
@@ -354,7 +342,6 @@ const loadProjects = async () => {
         projectTotalPages.value =
             pagination.last_page || pagination.total_pages || 1;
     } catch (error) {
-        console.error("Error loading projects:", error);
     } finally {
         loadingProjects.value = false;
     }
@@ -384,7 +371,6 @@ const saveProject = async (projectData) => {
             loadTasks();
         }
     } catch (error) {
-        console.error("Error saving project:", error);
         if (error.response?.data?.errors) {
             throw error;
         } else {
@@ -410,7 +396,6 @@ const deleteProject = async (projectId) => {
             loadTasks();
         }
     } catch (error) {
-        console.error("Error deleting project:", error);
         if (error.response?.data?.message) {
             alert(error.response.data.message);
         } else {
@@ -464,9 +449,7 @@ const exportToCSV = async () => {
         link.click();
         document.body.removeChild(link);
         window.URL.revokeObjectURL(url);
-    } catch (error) {
-        console.error("Error exporting CSV:", error);
-    }
+    } catch (error) {}
 };
 
 const props = defineProps({ auth: Object });
