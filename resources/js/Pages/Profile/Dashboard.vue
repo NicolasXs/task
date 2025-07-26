@@ -1,19 +1,17 @@
 <script setup>
-import { Head } from "@inertiajs/vue3";
-import { ref, onMounted, watch } from "vue";
-import { router } from "@inertiajs/vue3";
-import axios from "axios";
-import Sidebar from "@/Components/Dashboard/Sections/Sidebar.vue";
-import TasksSection from "@/Components/Dashboard/Sections/TasksSection.vue";
-import AdminSection from "@/Components/Dashboard/Sections/AdminSection.vue";
-import StatisticsSection from "@/Components/Dashboard/Sections/StatisticsSection.vue";
-import ProjectsSection from "@/Components/Dashboard/Sections/ProjectsSection.vue";
-import TaskModal from "@/Components/Dashboard/TaskModal.vue";
-import UserModal from "@/Components/Dashboard/Modals/UserModal.vue";
-import ProjectModal from "@/Components/Dashboard/Modals/ProjectModal.vue";
 import ConfirmModal from "@/Components/Dashboard/Modals/ConfirmModal.vue";
+import ProjectModal from "@/Components/Dashboard/Modals/ProjectModal.vue";
+import UserModal from "@/Components/Dashboard/Modals/UserModal.vue";
+import AdminSection from "@/Components/Dashboard/Sections/AdminSection.vue";
+import ProjectsSection from "@/Components/Dashboard/Sections/ProjectsSection.vue";
+import Sidebar from "@/Components/Dashboard/Sections/Sidebar.vue";
+import StatisticsSection from "@/Components/Dashboard/Sections/StatisticsSection.vue";
+import TasksSection from "@/Components/Dashboard/Sections/TasksSection.vue";
+import TaskModal from "@/Components/Dashboard/TaskModal.vue";
+import { Head, router } from "@inertiajs/vue3";
+import axios from "axios";
+import { onMounted, ref, watch } from "vue";
 
-// State
 const currentSection = ref("tasks");
 const sidebarOpen = ref(false);
 const tasks = ref([]);
@@ -38,7 +36,6 @@ const userForm = ref({ id: null, name: "", email: "", role: "user" });
 const loadingStats = ref(false);
 const statistics = ref({});
 
-// Projects state
 const projects = ref([]);
 const loadingProjects = ref(false);
 const projectModalOpen = ref(false);
@@ -50,7 +47,6 @@ const projectSearchTerm = ref("");
 const projectStatusFilter = ref("all");
 const projectSortBy = ref("newest");
 
-// Setup CSRF token for axios
 onMounted(() => {
     const token = document
         .querySelector('meta[name="csrf-token"]')
@@ -63,13 +59,7 @@ onMounted(() => {
     loadProjects();
 });
 
-// Watch for filter changes
 watch([searchTerm, filterValue, sortValue], () => {
-    console.log("Filter changed:", {
-        search: searchTerm.value,
-        filter: filterValue.value,
-        sort: sortValue.value,
-    });
     currentPage.value = 1;
     loadTasks();
 });
@@ -78,7 +68,6 @@ watch(currentPage, () => {
     loadTasks();
 });
 
-// Watch for project filter changes
 watch([projectSearchTerm, projectStatusFilter, projectSortBy], () => {
     projectCurrentPage.value = 1;
     loadProjects();
@@ -88,13 +77,11 @@ watch(projectCurrentPage, () => {
     loadProjects();
 });
 
-// Watch for selected project changes
 watch(selectedProjectId, () => {
     currentPage.value = 1;
     loadTasks();
 });
 
-// Métodos de navegação e handlers
 const showSection = (section) => {
     currentSection.value = section;
     sidebarOpen.value = false;
@@ -118,30 +105,23 @@ const loadTasks = async () => {
             per_page: tasksPerPage.value,
         };
 
-        // Only add search if it has a value
         if (searchTerm.value && searchTerm.value.trim() !== "") {
             params.search = searchTerm.value.trim();
         }
 
-        // Only add filter if it's not 'all'
         if (filterValue.value && filterValue.value !== "all") {
             params.filter = filterValue.value;
         }
 
-        // Only add sort if it's not the default
         if (sortValue.value && sortValue.value !== "newest") {
             params.sort = sortValue.value;
         }
 
-        // Add project filter
         if (selectedProjectId.value && selectedProjectId.value !== "all") {
             params.project_id = selectedProjectId.value;
         }
 
-        console.log("API Params:", params); // Debug line
-
         const response = await axios.get("/api/tasks", { params });
-        console.log("API Response:", response.data); // Debug line
         tasks.value = response.data.data.map((task) => ({
             ...task,
             completed: task.status === "completed",
@@ -150,15 +130,12 @@ const loadTasks = async () => {
         totalPages.value = pagination.last_page || pagination.total_pages || 1;
         totalTasks.value = pagination.total || tasks.value.length;
 
-        // Corrige currentPage se estiver fora do range após atualização
         if (currentPage.value > totalPages.value) {
             currentPage.value = totalPages.value > 0 ? totalPages.value : 1;
-            // A task será recarregada pelo watcher, evitando uma chamada dupla.
             return;
         }
     } catch (error) {
         console.error("Error loading tasks:", error);
-        alert("Error loading tasks. Please try again.");
     } finally {
         loading.value = false;
     }
@@ -169,7 +146,6 @@ const loadStats = async () => {
     try {
         const response = await axios.get("/api/tasks/statistics");
 
-        // Map the API response to match the component expectations
         const apiData = response.data;
 
         statistics.value = {
@@ -178,7 +154,6 @@ const loadStats = async () => {
             pending: apiData.summary?.pendingTasks || 0,
             dueThisWeek: apiData.summary?.tasksDueThisWeek || 0,
             overdue: apiData.summary?.overdueTasks || 0,
-            // Extract priority stats from tasksByPriority array
             urgent:
                 apiData.charts?.tasksByPriority?.find(
                     (p) => p.priority === "urgent"
@@ -195,14 +170,12 @@ const loadStats = async () => {
                 apiData.charts?.tasksByPriority?.find(
                     (p) => p.priority === "low"
                 )?.count || 0,
-            // Chart data
             tasksByStatus: apiData.charts?.tasksByStatus || [],
             tasksByPriority: apiData.charts?.tasksByPriority || [],
             tasksLast7Days: apiData.charts?.tasksLast7Days || [],
         };
     } catch (error) {
         console.error("Error loading stats:", error);
-        // Set default values on error
         statistics.value = {
             total: 0,
             completed: 0,
@@ -238,7 +211,6 @@ const loadUsers = async () => {
 const openTaskModal = (task = null) => {
     currentTask.value = task || {};
     showTaskModal.value = true;
-    // Load users for admin assignment if admin
     if (userType === "admin") {
         loadUsers();
     }
@@ -252,10 +224,8 @@ const closeTaskModal = () => {
 const saveTask = async (taskData) => {
     try {
         if (taskData.id) {
-            // Update existing task
             await axios.put(`/api/tasks/${taskData.id}`, taskData);
         } else {
-            // Create new task
             await axios.post("/api/tasks", taskData);
         }
 
@@ -265,7 +235,6 @@ const saveTask = async (taskData) => {
     } catch (error) {
         console.error("Error saving task:", error);
         if (error.response?.data?.errors) {
-            // Handle validation errors in the modal
             throw error;
         } else {
             alert("Error saving task. Please try again.");
@@ -280,7 +249,6 @@ const toggleTaskCompletion = async (taskId) => {
         loadStats();
     } catch (error) {
         console.error("Error toggling task:", error);
-        alert("Error updating task. Please try again.");
     }
 };
 
@@ -298,7 +266,6 @@ const deleteTask = async (taskId) => {
         loadStats();
     } catch (error) {
         console.error("Error deleting task:", error);
-        alert("Error deleting task. Please try again.");
     }
 };
 
@@ -311,7 +278,6 @@ const handleConfirm = async () => {
     confirmModalOpen.value = false;
 };
 
-// User Management Functions
 const openUserModal = (user = null) => {
     if (user) {
         userForm.value = {
@@ -337,7 +303,6 @@ const deleteUser = async (userId) => {
             loadUsers();
         } catch (error) {
             console.error("Error deleting user:", error);
-            alert("Error deleting user. Please try again.");
         }
     }
 };
@@ -350,15 +315,11 @@ const saveUser = async () => {
             await axios.post("/api/users", userForm.value);
         }
 
-        // Fechar modal e resetar form apenas em caso de sucesso
         userModalOpen.value = false;
         userForm.value = { id: null, name: "", email: "", role: "user" };
         loadUsers();
     } catch (error) {
         console.error("Error saving user:", error);
-        alert("Error saving user. Please try again.");
-        // Mesmo em caso de erro, vamos fechar o modal se o usuário quiser
-        // userModalOpen.value = false; // Removido para manter o modal aberto em caso de erro
     }
 };
 
@@ -367,7 +328,6 @@ const closeUserModal = () => {
     userForm.value = { id: null, name: "", email: "", role: "user" };
 };
 
-// Project Management Functions
 const loadProjects = async () => {
     loadingProjects.value = true;
     try {
@@ -395,7 +355,6 @@ const loadProjects = async () => {
             pagination.last_page || pagination.total_pages || 1;
     } catch (error) {
         console.error("Error loading projects:", error);
-        alert("Error loading projects. Please try again.");
     } finally {
         loadingProjects.value = false;
     }
@@ -414,23 +373,19 @@ const closeProjectModal = () => {
 const saveProject = async (projectData) => {
     try {
         if (projectData.id) {
-            // Update existing project
             await axios.put(`/api/projects/${projectData.id}`, projectData);
         } else {
-            // Create new project
             await axios.post("/api/projects", projectData);
         }
 
         closeProjectModal();
         loadProjects();
-        // Reload tasks if we're currently filtering by this project
         if (selectedProjectId.value !== "all") {
             loadTasks();
         }
     } catch (error) {
         console.error("Error saving project:", error);
         if (error.response?.data?.errors) {
-            // Handle validation errors in the modal
             throw error;
         } else {
             alert("Error saving project. Please try again.");
@@ -450,7 +405,6 @@ const deleteProject = async (projectId) => {
     try {
         await axios.delete(`/api/projects/${projectId}`);
         loadProjects();
-        // Reload tasks if we were filtering by this project
         if (selectedProjectId.value == projectId) {
             selectedProjectId.value = "all";
             loadTasks();
@@ -512,11 +466,9 @@ const exportToCSV = async () => {
         window.URL.revokeObjectURL(url);
     } catch (error) {
         console.error("Error exporting CSV:", error);
-        alert("Error exporting tasks. Please try again.");
     }
 };
 
-// Dados do usuário para Sidebar
 const props = defineProps({ auth: Object });
 const userName = props.auth?.user?.name || "User";
 const userType = props.auth?.user?.user_type || "user";
@@ -572,7 +524,6 @@ const currentUserId = props.auth?.user?.id;
     <Head title="Task Dashboard" />
 
     <div class="flex h-screen overflow-hidden bg-gray-100">
-        <!-- Sidebar -->
         <Sidebar
             :currentSection="currentSection"
             :sidebarOpen="sidebarOpen"
@@ -584,9 +535,7 @@ const currentUserId = props.auth?.user?.id;
             @logout="logout"
         />
 
-        <!-- Main Content -->
         <div class="flex-1 overflow-auto">
-            <!-- Mobile Header -->
             <header
                 class="bg-white shadow-sm md:hidden p-4 flex items-center justify-between"
             >
@@ -653,7 +602,6 @@ const currentUserId = props.auth?.user?.id;
         </div>
     </div>
 
-    <!-- Task Modal -->
     <TaskModal
         :isOpen="showTaskModal"
         :task="currentTask"
@@ -663,21 +611,18 @@ const currentUserId = props.auth?.user?.id;
         @close="closeTaskModal"
         @save="saveTask"
     />
-    <!-- User Modal -->
     <UserModal
         :userModalOpen="userModalOpen"
         :userForm="userForm"
         @close="closeUserModal"
         @save-user="saveUser"
     />
-    <!-- Project Modal -->
     <ProjectModal
         :isOpen="projectModalOpen"
         :project="currentProject"
         @close="closeProjectModal"
         @save="saveProject"
     />
-    <!-- Confirmation Modal -->
     <ConfirmModal
         :confirmModalOpen="confirmModalOpen"
         :confirmMessage="confirmMessage"
@@ -685,7 +630,6 @@ const currentUserId = props.auth?.user?.id;
         @confirm="handleConfirm"
     />
 
-    <!-- Font Awesome CDN -->
     <link
         rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
