@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Actions\User\DeleteUserAction;
-use App\Actions\User\ListUsersAction;
-use App\Actions\User\ShowUserAction;
-use App\Actions\User\StoreUserAction;
-use App\Actions\User\UpdateUserAction;
+use App\Services\User\DeleteUserAction;
+use App\Services\User\ListUsersAction;
+use App\Services\User\ShowUserAction;
+use App\Services\User\StoreUserAction;
+use App\Services\User\UpdateUserAction;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;

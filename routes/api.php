@@ -44,16 +44,13 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::middleware(['auth:sanctum', 'web'])->group(function () {
-  // Task routes - specific routes must come before resource routes
   Route::get('tasks/statistics', [TaskController::class, 'statistics']);
   Route::get('tasks/export/csv', [TaskController::class, 'export']);
   Route::patch('tasks/{task}/toggle', [TaskController::class, 'toggle']);
   Route::apiResource('tasks', TaskController::class);
 
-  // Project routes
   Route::get('projects/{project}/statistics', [ProjectController::class, 'statistics']);
   Route::apiResource('projects', ProjectController::class);
 
-  // User routes (admin only)
   Route::apiResource('users', UserController::class);
 });
