@@ -2,6 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\Task\DeleteTaskAction;
+use App\Services\Task\ListTasksAction;
+use App\Services\Task\ShowTaskAction;
+use App\Services\Task\StoreTaskAction;
+use App\Services\Task\TaskStatisticsAction;
+use App\Services\Task\ToggleTaskAction;
+use App\Services\Task\UpdateTaskAction;
 use App\Models\Task;
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -62,7 +69,7 @@ class TaskController extends Controller
      */
     public function index(Request $request)
     {
-        $result = app(\App\Actions\Task\ListTasksAction::class)->handle($request);
+        $result = app(ListTasksAction::class)->handle($request);
         return response()->json($result);
     }
 
@@ -105,7 +112,7 @@ class TaskController extends Controller
      */
     public function store(Request $request)
     {
-        $task = app(\App\Actions\Task\StoreTaskAction::class)->handle($request);
+        $task = app(StoreTaskAction::class)->handle($request);
         return response()->json($task, 201);
     }
 
@@ -146,7 +153,7 @@ class TaskController extends Controller
     public function show(Task $task)
     {
         $this->authorize('view', $task);
-        $task = app(\App\Actions\Task\ShowTaskAction::class)->handle($task);
+        $task = app(ShowTaskAction::class)->handle($task);
         return response()->json($task);
     }
 
@@ -196,7 +203,7 @@ class TaskController extends Controller
     public function update(Request $request, Task $task)
     {
         $this->authorize('update', $task);
-        $task = app(\App\Actions\Task\UpdateTaskAction::class)->handle($request, $task);
+        $task = app(UpdateTaskAction::class)->handle($request, $task);
         return response()->json($task);
     }
 
@@ -235,7 +242,7 @@ class TaskController extends Controller
     public function destroy(Task $task)
     {
         $this->authorize('delete', $task);
-        $result = app(\App\Actions\Task\DeleteTaskAction::class)->handle($task);
+        $result = app(DeleteTaskAction::class)->handle($task);
         return response()->json($result);
     }
 
@@ -274,7 +281,7 @@ class TaskController extends Controller
     public function toggle(Task $task)
     {
         $this->authorize('update', $task);
-        $task = app(\App\Actions\Task\ToggleTaskAction::class)->handle($task);
+        $task = app(ToggleTaskAction::class)->handle($task);
         return response()->json($task);
     }
 
@@ -303,7 +310,7 @@ class TaskController extends Controller
      */
     public function statistics()
     {
-        $result = app(\App\Actions\Task\TaskStatisticsAction::class)->handle();
+        $result = app(TaskStatisticsAction::class)->handle();
         return response()->json($result);
     }
 

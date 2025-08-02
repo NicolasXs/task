@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Actions\Task;
+namespace App\Services\Task;
 
 use App\Models\Task;
 use Illuminate\Http\Request;
@@ -20,9 +20,8 @@ class StoreTaskAction
       'project_id' => 'nullable|exists:projects,id'
     ]);
 
-    $assignedTo = Auth::id(); // Default to current user
+    $assignedTo = Auth::id(); 
 
-    // Only allow admins to assign to other users
     if ($request->assigned_to && Auth::user()->user_type === 'admin') {
       $assignedTo = $request->assigned_to;
     }

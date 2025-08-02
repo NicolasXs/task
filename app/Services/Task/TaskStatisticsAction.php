@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Actions\Task;
+namespace App\Services\Task;
 
 use App\Models\Task;
 use Illuminate\Support\Facades\Auth;
@@ -22,7 +22,6 @@ class TaskStatisticsAction
       });
     }
 
-    // Basic statistics
     $totalTasks = clone ($query);
     $totalTasks = $totalTasks->count();
 
@@ -32,7 +31,6 @@ class TaskStatisticsAction
     $pendingTasks = clone ($query);
     $pendingTasks = $pendingTasks->where('status', 'pending')->count();
 
-    // Priority statistics
     $urgentPriorityTasks = clone ($query);
     $urgentPriorityTasks = $urgentPriorityTasks->where('priority', 'urgent')->count();
 
@@ -45,7 +43,6 @@ class TaskStatisticsAction
     $lowPriorityTasks = clone ($query);
     $lowPriorityTasks = $lowPriorityTasks->where('priority', 'low')->count();
 
-    // Tasks by priority for charts
     $tasksByPriority = [
       ['priority' => 'urgent', 'count' => $urgentPriorityTasks, 'label' => 'Urgente'],
       ['priority' => 'high', 'count' => $highPriorityTasks, 'label' => 'Alta'],
@@ -53,7 +50,6 @@ class TaskStatisticsAction
       ['priority' => 'low', 'count' => $lowPriorityTasks, 'label' => 'Baixa'],
     ];
 
-    // Tasks created in the last 7 days
     $tasksLast7Days = [];
     for ($i = 6; $i >= 0; $i--) {
       $date = Carbon::now()->subDays($i);
@@ -67,7 +63,6 @@ class TaskStatisticsAction
       ];
     }
 
-    // Tasks due this week
     $weekQuery = clone ($query);
     $tasksDueThisWeek = $weekQuery->whereBetween('due_date', [
       Carbon::now()->startOfWeek(),
@@ -76,7 +71,6 @@ class TaskStatisticsAction
       ->where('status', '!=', 'completed')
       ->count();
 
-    // Overdue tasks
     $overdueQuery = clone ($query);
     $overdueTasks = $overdueQuery->where('due_date', '<', Carbon::now()->format('Y-m-d'))
       ->where('status', '!=', 'completed')

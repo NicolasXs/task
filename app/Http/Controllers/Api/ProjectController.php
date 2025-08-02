@@ -9,12 +9,12 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use App\Actions\Project\ListProjectsAction;
-use App\Actions\Project\StoreProjectAction;
-use App\Actions\Project\ShowProjectAction;
-use App\Actions\Project\UpdateProjectAction;
-use App\Actions\Project\DeleteProjectAction;
-use App\Actions\Project\ProjectStatisticsAction;
+use App\Services\Project\ListProjectsAction;
+use App\Services\Project\StoreProjectAction;
+use App\Services\Project\ShowProjectAction;
+use App\Services\Project\UpdateProjectAction;
+use App\Services\Project\DeleteProjectAction;
+use App\Services\Project\ProjectStatisticsAction;
 
 class ProjectController extends Controller
 {

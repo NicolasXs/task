@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Actions\Project;
+namespace App\Services\Project;
 
 use App\Models\Project;
 use App\Http\Resources\PaginateCollection;
@@ -54,7 +54,6 @@ class ListProjectsAction
         $query->orderBy('end_date', 'asc');
         break;
       case 'progress':
-        // Para ordenação por progresso, vamos usar uma subconsulta
         $query->withCount([
           'tasks as total_tasks_count',
           'tasks as completed_tasks_count' => function ($q) {

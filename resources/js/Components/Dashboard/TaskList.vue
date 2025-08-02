@@ -119,7 +119,6 @@
                 </div>
                 <!-- ...existing code... -->
             </div>
-            <!-- Paginação removida daqui, pois é global -->
         </div>
     </div>
 </template>

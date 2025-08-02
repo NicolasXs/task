@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Actions\User;
+namespace App\Services\User;
 
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
@@ -16,8 +16,6 @@ class ListUsersAction
       ])
       ->get()
       ->map(function ($user) {
-        // Calculate total tasks without duplication
-        // Get unique task IDs from both created and assigned tasks
         $createdTaskIds = $user->createdTasks()->pluck('id')->toArray();
         $assignedTaskIds = $user->assignedTasks()->pluck('id')->toArray();
         $uniqueTaskIds = array_unique(array_merge($createdTaskIds, $assignedTaskIds));

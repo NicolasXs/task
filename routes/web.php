@@ -20,15 +20,6 @@ Route::get('/dashboard', function () {
     return Inertia::render('Profile/Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-// Test route to check if tasks exist
-Route::get('/test-tasks', function () {
-    return response()->json([
-        'users_count' => \App\Models\User::count(),
-        'tasks_count' => \App\Models\Task::count(),
-        'sample_task' => \App\Models\Task::first()
-    ]);
-});
-
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

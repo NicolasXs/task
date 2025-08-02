@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Actions\Task;
+namespace App\Services\Task;
 
 use App\Models\Task;
 use Illuminate\Http\Request;
@@ -15,7 +15,6 @@ class ListTasksAction
     $user = Auth::user();
     $query = Task::query();
 
-    // Only show user's own tasks (unless admin)
     if ($user->user_type !== 'admin') {
       $query->where(function ($q) use ($user) {
         $q->where('created_by', $user->id)
@@ -23,22 +22,18 @@ class ListTasksAction
       });
     }
 
-    // Search
     if ($request->filled('search') && trim($request->search) !== '') {
       $query->search($request->search);
     }
 
-    // Filter by status
     if ($request->filled('status')) {
       $query->status($request->status);
     }
 
-    // Filter by priority
     if ($request->filled('priority')) {
       $query->priority($request->priority);
     }
 
-    // Filter by project
     if ($request->filled('project_id') && $request->project_id !== 'all') {
       if ($request->project_id === 'null' || $request->project_id === '') {
         $query->whereNull('project_id');
@@ -47,7 +42,6 @@ class ListTasksAction
       }
     }
 
-    // Filter by completion (for frontend compatibility)
     if ($request->filled('filter') && $request->filter !== 'all') {
       switch ($request->filter) {
         case 'completed':
@@ -68,7 +62,6 @@ class ListTasksAction
       }
     }
 
-    // Sort
     switch ($request->get('sort', 'newest')) {
       case 'oldest':
         $query->orderBy('created_at', 'asc');
@@ -79,7 +72,7 @@ class ListTasksAction
       case 'dueDate':
         $query->orderBy('due_date', 'asc');
         break;
-      default: // newest
+      default: 
         $query->orderBy('created_at', 'desc');
     }
 

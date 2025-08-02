@@ -1,21 +1,15 @@
 <?php
 
-namespace App\Actions\Project;
+namespace App\Services\Project;
 
 use App\Models\Project;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Gate;
 
-class UpdateProjectAction
+class StoreProjectAction
 {
-  public function handle(Project $project, Request $request)
+  public function handle(Request $request)
   {
-    // Check if user can update this project using policy
-    if (!Gate::allows('update', $project)) {
-      throw new \Illuminate\Auth\Access\AuthorizationException('You are not authorized to update this project.');
-    }
-
     $request->validate([
       'name' => 'required|string|max:255',
       'description' => 'nullable|string',
@@ -25,13 +19,14 @@ class UpdateProjectAction
       'end_date' => 'nullable|date|after_or_equal:start_date',
     ]);
 
-    $project->update([
+    $project = Project::create([
       'name' => $request->name,
       'description' => $request->description,
-      'color' => $request->color ?? $project->color,
-      'status' => $request->status ?? $project->status,
+      'color' => $request->color ?? '#3B82F6', // Default blue color
+      'status' => $request->status ?? 'active',
       'start_date' => $request->start_date,
       'end_date' => $request->end_date,
+      'created_by' => Auth::id(),
     ]);
 
     $project->load(['creator', 'tasks']);

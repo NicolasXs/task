@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Actions\Project;
+namespace App\Services\Project;
 
 use App\Models\Project;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 
@@ -12,7 +13,7 @@ class ProjectStatisticsAction
   {
     // Check if user can view this project using policy
     if (!Gate::allows('view', $project)) {
-      throw new \Illuminate\Auth\Access\AuthorizationException('You are not authorized to view this project.');
+      throw new AuthorizationException('You are not authorized to view this project.');
     }
 
     $project->load(['tasks.creator', 'tasks.assignedUser']);

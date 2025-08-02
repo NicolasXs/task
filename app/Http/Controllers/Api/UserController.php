@@ -2,6 +2,11 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Actions\User\DeleteUserAction;
+use App\Actions\User\ListUsersAction;
+use App\Actions\User\ShowUserAction;
+use App\Actions\User\StoreUserAction;
+use App\Actions\User\UpdateUserAction;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -20,7 +25,7 @@ class UserController extends Controller
    */
   public function index(): JsonResponse
   {
-    $users = app(\App\Actions\User\ListUsersAction::class)->handle();
+    $users = app(ListUsersAction::class)->handle();
     return response()->json($users);
   }
 
@@ -29,7 +34,7 @@ class UserController extends Controller
    */
   public function store(Request $request): JsonResponse
   {
-    $user = app(\App\Actions\User\StoreUserAction::class)->handle($request);
+    $user = app(StoreUserAction::class)->handle($request);
     return response()->json($user, 201);
   }
 
@@ -38,7 +43,7 @@ class UserController extends Controller
    */
   public function show(User $user): JsonResponse
   {
-    $user = app(\App\Actions\User\ShowUserAction::class)->handle($user);
+    $user = app(ShowUserAction::class)->handle($user);
     return response()->json($user);
   }
 
@@ -47,7 +52,7 @@ class UserController extends Controller
    */
   public function update(Request $request, User $user): JsonResponse
   {
-    $user = app(\App\Actions\User\UpdateUserAction::class)->handle($request, $user);
+    $user = app(UpdateUserAction::class)->handle($request, $user);
     return response()->json($user);
   }
 
@@ -56,7 +61,7 @@ class UserController extends Controller
    */
   public function destroy(User $user): JsonResponse
   {
-    $result = app(\App\Actions\User\DeleteUserAction::class)->handle($user);
+    $result = app(DeleteUserAction::class)->handle($user);
     if (!empty($result['forbidden'])) {
       return response()->json(['message' => $result['message']], 403);
     }

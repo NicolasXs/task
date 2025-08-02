@@ -198,10 +198,10 @@ A aplicação estará disponível em `http://localhost:8000`
 ```
 todo-app/
 ├── app/
-│   ├── Actions/           # Actions para lógica de negócio
-│   │   ├── Project/       # Actions relacionadas a projetos
-│   │   ├── Task/          # Actions relacionadas a tarefas
-│   │   └── User/          # Actions relacionadas a usuários
+│   ├── Services/           # Services para lógica de negócio
+│   │   ├── Project/       # Services relacionadas a projetos
+│   │   ├── Task/          # Services relacionadas a tarefas
+│   │   └── User/          # Services relacionadas a usuários
 │   ├── Http/
 │   │   ├── Controllers/   # Controllers da aplicação
 │   │   ├── Middleware/    # Middlewares customizados
