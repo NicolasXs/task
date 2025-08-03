@@ -3,42 +3,55 @@
 namespace App\Services\Task;
 
 use App\Models\Task;
+use App\Models\Project;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 
 class StoreTaskAction
 {
   public function handle(Request $request)
   {
-    $request->validate([
+    $validated = $request->validate([
       'title' => 'required|string|max:255',
       'description' => 'nullable|string',
-      'priority' => 'in:low,medium,high',
-      'due_date' => 'nullable|date',
+      'priority' => ['required', Rule::in(['high', 'medium', 'low', 'urgent'])],
+      'due_date' => 'nullable|date|after_or_equal:today',
       'completed' => 'boolean',
-      'assigned_to' => 'nullable|exists:users,id',
-      'project_id' => 'nullable|exists:projects,id'
+      'project_id' => 'nullable|exists:projects,id',
+      'assigned_to' => 'nullable|exists:users,id'
     ]);
 
-    $assignedTo = Auth::id(); 
+    // Verificar se o usuário pode atribuir a tarefa ao projeto
+    if (isset($validated['project_id'])) {
+      $project = Project::find($validated['project_id']);
+      if (!$project || $project->created_by !== Auth::id()) {
+        throw new \Illuminate\Http\Exceptions\HttpResponseException(
+          response()->json(['message' => 'Unauthorized to assign task to this project'], 403)
+        );
+      }
+    }
 
-    if ($request->assigned_to && Auth::user()->user_type === 'admin') {
-      $assignedTo = $request->assigned_to;
+    $assignedTo = $validated['assigned_to'] ?? Auth::id();
+
+    // Only allow admins to assign to others
+    if ($request->assigned_to && Auth::user()->user_type !== 'admin') {
+      $assignedTo = Auth::id();
     }
 
     $task = Task::create([
-      'title' => $request->title,
-      'description' => $request->description,
-      'priority' => $request->priority ?? 'medium',
-      'due_date' => $request->due_date,
-      'status' => $request->completed ? 'completed' : 'pending',
-      'completed_at' => $request->completed ? now() : null,
+      'title' => $validated['title'],
+      'description' => $validated['description'],
+      'priority' => $validated['priority'],
+      'due_date' => $validated['due_date'],
+      'status' => ($validated['completed'] ?? false) ? 'completed' : 'pending',
+      'completed_at' => ($validated['completed'] ?? false) ? now() : null,
       'created_by' => Auth::id(),
       'assigned_to' => $assignedTo,
-      'project_id' => $request->project_id,
+      'project_id' => $validated['project_id'],
     ]);
 
-    $task->load(['creator', 'assignedUser', 'project']);
+    $task->load(['creator', 'assignedUser', 'project', 'assignments.user']);
 
     return $task;
   }

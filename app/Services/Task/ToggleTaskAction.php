@@ -15,7 +15,7 @@ class ToggleTaskAction
       'completed_at' => $completed ? now() : null,
     ]);
 
-    $task->load(['creator', 'assignedUser']);
+    $task->load(['creator', 'assignedUser', 'project', 'assignments.user']);
 
     return $task;
   }

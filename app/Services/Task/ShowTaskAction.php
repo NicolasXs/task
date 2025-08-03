@@ -8,7 +8,7 @@ class ShowTaskAction
 {
   public function handle(Task $task)
   {
-    $task->load(['creator', 'assignedUser', 'comments.user']);
+    $task->load(['creator', 'assignedUser', 'project', 'assignments.user', 'comments.user']);
     return $task;
   }
 }

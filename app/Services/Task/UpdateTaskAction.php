@@ -3,22 +3,34 @@
 namespace App\Services\Task;
 
 use App\Models\Task;
+use App\Models\Project;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 
 class UpdateTaskAction
 {
   public function handle(Request $request, Task $task)
   {
-    $request->validate([
-      'title' => 'string|max:255',
+    $validated = $request->validate([
+      'title' => 'sometimes|required|string|max:255',
       'description' => 'nullable|string',
-      'priority' => 'in:low,medium,high',
-      'due_date' => 'nullable|date',
+      'priority' => ['sometimes', Rule::in(['high', 'medium', 'low', 'urgent'])],
+      'due_date' => 'nullable|date|after_or_equal:today',
       'completed' => 'boolean',
-      'assigned_to' => 'nullable|exists:users,id',
-      'project_id' => 'nullable|exists:projects,id'
+      'project_id' => 'nullable|exists:projects,id',
+      'assigned_to' => 'nullable|exists:users,id'
     ]);
+
+    // Verificar se o usuário pode atribuir a tarefa ao projeto
+    if (isset($validated['project_id'])) {
+      $project = Project::find($validated['project_id']);
+      if ($project && $project->created_by !== Auth::id()) {
+        throw new \Illuminate\Http\Exceptions\HttpResponseException(
+          response()->json(['message' => 'Unauthorized to assign task to this project'], 403)
+        );
+      }
+    }
 
     $updateData = $request->only(['title', 'description', 'priority', 'due_date', 'project_id']);
 
@@ -27,13 +39,17 @@ class UpdateTaskAction
       $updateData['assigned_to'] = $request->assigned_to ?: Auth::id();
     }
 
-    if ($request->has('completed')) {
-      $updateData['status'] = $request->completed ? 'completed' : 'pending';
-      $updateData['completed_at'] = $request->completed ? now() : null;
+    if (isset($validated['completed'])) {
+      $updateData['status'] = $validated['completed'] ? 'completed' : 'pending';
+      if ($validated['completed']) {
+        $updateData['completed_at'] = now();
+      } else {
+        $updateData['completed_at'] = null;
+      }
     }
 
     $task->update($updateData);
-    $task->load(['creator', 'assignedUser', 'project']);
+    $task->load(['creator', 'assignedUser', 'project', 'assignments.user']);
 
     return $task;
   }
