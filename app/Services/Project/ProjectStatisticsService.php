@@ -7,7 +7,7 @@ use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 
-class ProjectStatisticsAction
+class ProjectStatisticsService
 {
   public function handle(Project $project)
   {

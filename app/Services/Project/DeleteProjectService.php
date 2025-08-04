@@ -7,7 +7,7 @@ use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 
-class DeleteProjectAction
+class DeleteProjectService
 {
   public function handle(Project $project)
   {

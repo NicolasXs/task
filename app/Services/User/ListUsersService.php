@@ -5,7 +5,7 @@ namespace App\Services\User;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 
-class ListUsersAction
+class ListUsersService
 {
   public function handle()
   {

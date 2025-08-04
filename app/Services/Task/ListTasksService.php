@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Resources\PaginateCollection;
 use Carbon\Carbon;
 
-class ListTasksAction
+class ListTasksService
 {
   public function handle(Request $request)
   {

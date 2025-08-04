@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
-class TaskStatisticsAction
+class TaskStatisticsService
 {
   public function handle()
   {

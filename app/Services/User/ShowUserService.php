@@ -4,7 +4,7 @@ namespace App\Services\User;
 
 use App\Models\User;
 
-class ShowUserAction
+class ShowUserService
 {
   public function handle(User $user)
   {

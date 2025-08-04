@@ -5,7 +5,7 @@ namespace App\Services\User;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
-class DeleteUserAction
+class DeleteUserService
 {
   public function handle(User $user)
   {

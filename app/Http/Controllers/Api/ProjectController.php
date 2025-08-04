@@ -9,12 +9,12 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use App\Services\Project\ListProjectsAction;
-use App\Services\Project\StoreProjectAction;
-use App\Services\Project\ShowProjectAction;
-use App\Services\Project\UpdateProjectAction;
-use App\Services\Project\DeleteProjectAction;
-use App\Services\Project\ProjectStatisticsAction;
+use App\Services\Project\ListProjectsService;
+use App\Services\Project\StoreProjectService;
+use App\Services\Project\ShowProjectService;
+use App\Services\Project\UpdateProjectService;
+use App\Services\Project\DeleteProjectService;
+use App\Services\Project\ProjectStatisticsService;
 
 class ProjectController extends Controller
 {
@@ -47,7 +47,7 @@ class ProjectController extends Controller
      *     )
      * )
      */
-    public function index(Request $request, ListProjectsAction $listProjects): JsonResponse
+    public function index(Request $request, ListProjectsService $listProjects): JsonResponse
     {
         try {
             $result = $listProjects->handle($request);
@@ -96,7 +96,7 @@ class ProjectController extends Controller
      *     )
      * )
      */
-    public function store(Request $request, StoreProjectAction $storeProject): JsonResponse
+    public function store(Request $request, StoreProjectService $storeProject): JsonResponse
     {
         try {
             $project = $storeProject->handle($request);
@@ -149,7 +149,7 @@ class ProjectController extends Controller
      *     )
      * )
      */
-    public function show(Project $project, ShowProjectAction $showProject): JsonResponse
+    public function show(Project $project, ShowProjectService $showProject): JsonResponse
     {
         try {
             $project = $showProject->handle($project);
@@ -167,7 +167,7 @@ class ProjectController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Project $project, UpdateProjectAction $updateProject): JsonResponse
+    public function update(Request $request, Project $project, UpdateProjectService $updateProject): JsonResponse
     {
         try {
             $project = $updateProject->handle($project, $request);
@@ -193,7 +193,7 @@ class ProjectController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Project $project, DeleteProjectAction $deleteProject): JsonResponse
+    public function destroy(Project $project, DeleteProjectService $deleteProject): JsonResponse
     {
         try {
             $deleteProject->handle($project);
@@ -248,7 +248,7 @@ class ProjectController extends Controller
      *     )
      * )
      */
-    public function statistics(Project $project, ProjectStatisticsAction $projectStats): JsonResponse
+    public function statistics(Project $project, ProjectStatisticsService $projectStats): JsonResponse
     {
         try {
             $stats = $projectStats->handle($project);

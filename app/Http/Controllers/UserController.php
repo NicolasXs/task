@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use App\Services\User\ListUsersAction;
+use App\Services\User\ListUsersService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Gate;
@@ -38,11 +38,11 @@ class UserController extends Controller
      *     )
      * )
      */
-    public function index(ListUsersAction $listUsersAction)
+    public function index(ListUsersService $listUsersService)
     {
         Gate::authorize('manage-users');
 
-        $users = $listUsersAction->handle();
+        $users = $listUsersService->handle();
 
         return response()->json([
             'data' => $users

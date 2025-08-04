@@ -6,7 +6,7 @@ use App\Models\Task;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
-class ExportTasksAction
+class ExportTasksService
 {
   /**
    * Handle the export of tasks to CSV

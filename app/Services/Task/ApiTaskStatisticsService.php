@@ -5,7 +5,7 @@ namespace App\Services\Task;
 use App\Models\Task;
 use Illuminate\Support\Facades\Auth;
 
-class ApiTaskStatisticsAction
+class ApiTaskStatisticsService
 {
   public function handle()
   {

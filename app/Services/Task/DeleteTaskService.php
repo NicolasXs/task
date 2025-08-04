@@ -4,7 +4,7 @@ namespace App\Services\Task;
 
 use App\Models\Task;
 
-class DeleteTaskAction
+class DeleteTaskService
 {
   public function handle(Task $task)
   {

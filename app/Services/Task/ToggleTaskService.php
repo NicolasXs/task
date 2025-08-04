@@ -4,7 +4,7 @@ namespace App\Services\Task;
 
 use App\Models\Task;
 
-class ToggleTaskAction
+class ToggleTaskService
 {
   public function handle(Task $task)
   {

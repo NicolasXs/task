@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Services\User\DeleteUserAction;
-use App\Services\User\ListUsersAction;
-use App\Services\User\ShowUserAction;
-use App\Services\User\StoreUserAction;
-use App\Services\User\UpdateUserAction;
+use App\Services\User\DeleteUserService;
+use App\Services\User\ListUsersService;
+use App\Services\User\ShowUserService;
+use App\Services\User\StoreUserService;
+use App\Services\User\UpdateUserService;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -25,7 +25,7 @@ class UserController extends Controller
    */
   public function index(): JsonResponse
   {
-    $users = app(ListUsersAction::class)->handle();
+    $users = app(ListUsersService::class)->handle();
     return response()->json($users);
   }
 
@@ -34,7 +34,7 @@ class UserController extends Controller
    */
   public function store(Request $request): JsonResponse
   {
-    $user = app(StoreUserAction::class)->handle($request);
+    $user = app(StoreUserService::class)->handle($request);
     return response()->json($user, 201);
   }
 
@@ -43,7 +43,7 @@ class UserController extends Controller
    */
   public function show(User $user): JsonResponse
   {
-    $user = app(ShowUserAction::class)->handle($user);
+    $user = app(ShowUserService::class)->handle($user);
     return response()->json($user);
   }
 
@@ -52,7 +52,7 @@ class UserController extends Controller
    */
   public function update(Request $request, User $user): JsonResponse
   {
-    $user = app(UpdateUserAction::class)->handle($request, $user);
+    $user = app(UpdateUserService::class)->handle($request, $user);
     return response()->json($user);
   }
 
@@ -61,7 +61,7 @@ class UserController extends Controller
    */
   public function destroy(User $user): JsonResponse
   {
-    $result = app(DeleteUserAction::class)->handle($user);
+    $result = app(DeleteUserService::class)->handle($user);
     if (!empty($result['forbidden'])) {
       return response()->json(['message' => $result['message']], 403);
     }

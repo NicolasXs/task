@@ -4,7 +4,7 @@ namespace App\Services\Task;
 
 use App\Models\Task;
 
-class ShowTaskAction
+class ShowTaskService
 {
   public function handle(Task $task)
   {

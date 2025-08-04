@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 
-class UpdateUserAction
+class UpdateUserService
 {
   public function handle(Request $request, User $user)
   {
